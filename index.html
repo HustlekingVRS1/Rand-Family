@@ -15,6 +15,7 @@
       text-align: center;
       margin: 0;
       padding: 30px;
+      overflow-x: hidden;
     }
 
     h1 {
@@ -40,11 +41,76 @@
       margin: 25px 0;
     }
 
-    button {
-      padding: 12px 24px;
-      font-size: 18px;
+    audio {
+      width: 90%;
+      max-width: 500px;
+    }
+
+    /* MAIN PAGE CONTENT */
+
+    #pageContent {
+      transition:
+        filter 1.5s ease,
+        opacity 1.5s ease;
+    }
+
+    .blurred {
+      filter: blur(12px) brightness(40%);
+      opacity: 0.5;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* OVERLAY */
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      z-index: 9999;
+
+      opacity: 1;
+      transition: opacity 1.5s ease;
+    }
+
+    #overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* BUTTON */
+
+    #continueButton {
+
+      padding: 22px 42px;
+
+      font-size: 24px;
+
+      border: none;
+
+      border-radius: 12px;
+
       cursor: pointer;
-      margin-top: 20px;
+
+      background: white;
+
+      color: black;
+
+      transition:
+        transform 0.2s ease,
+        opacity 0.3s ease;
+
+      box-shadow:
+        0 0 30px rgba(255,255,255,0.25);
+    }
+
+    #continueButton:hover {
+      transform: scale(1.05);
     }
 
   </style>
@@ -52,86 +118,110 @@
 
 <body>
 
-<h1>Memories</h1>
+<!-- OVERLAY -->
 
-<p>of a life that's been loved</p>
+<div id="overlay" style="display:none;">
 
-<div class="video-container">
-
-  <iframe
-    src="https://www.youtube.com/embed/vPGCUgbZX8w"
-    allowfullscreen>
-  </iframe>
+  <button id="continueButton">
+    Tap Here to Continue
+  </button>
 
 </div>
 
-<div class="audio-section">
+<!-- PAGE CONTENT -->
 
-  <h2>Audio Files</h2>
+<div id="pageContent">
 
-  <div class="audio-item">
-    <p>Ed Sheeran - Supermarket Flowers (Voicemail edition)</p>
+  <h1>Memories</h1>
 
-    <audio controls>
-      <source src="flowers.mp3" type="audio/mp3">
-    </audio>
+  <p>of a life that's been loved</p>
+
+  <div class="video-container">
+
+    <iframe
+      src="https://www.youtube.com/embed/vPGCUgbZX8w"
+      allowfullscreen>
+    </iframe>
+
   </div>
 
-  <div class="audio-item">
-    <p>Voicemail 1</p>
+  <div class="audio-section">
 
-    <audio id="autoplayAudio" controls>
-      <source src="dads-voicemail-hihi.wav" type="audio/wav">
-    </audio>
-  </div>
+    <h2>Audio Files</h2>
 
-  <div class="audio-item">
-    <p>Voicemail 2</p>
+    <div class="audio-item">
 
-    <audio controls>
-      <source src="dads-voicemail-hello.wav" type="audio/wav">
-    </audio>
+      <p>Ed Sheeran - Supermarket Flowers (Voicemail edition)</p>
+
+      <audio controls>
+        <source src="flowers.mp3" type="audio/mp3">
+      </audio>
+
+    </div>
+
+    <div class="audio-item">
+
+      <p>Voicemail 1</p>
+
+      <audio id="autoplayAudio" controls>
+        <source src="dads-voicemail-hihi.wav" type="audio/wav">
+      </audio>
+
+    </div>
+
+    <div class="audio-item">
+
+      <p>Voicemail 2</p>
+
+      <audio controls>
+        <source src="dads-voicemail-hello.wav" type="audio/wav">
+      </audio>
+
+    </div>
+
   </div>
 
 </div>
-
-<button id="playButton" style="display:none;">
-  Tap to Play Voicemail
-</button>
 
 <script>
 
   const params = new URLSearchParams(window.location.search);
 
-  const shouldAutoplay = params.get("qr") === "true";
+  const shouldUseOverlay = params.get("qr") === "true";
+
+  const overlay = document.getElementById("overlay");
+
+  const continueButton = document.getElementById("continueButton");
+
+  const pageContent = document.getElementById("pageContent");
 
   const audio = document.getElementById("autoplayAudio");
 
-  const playButton = document.getElementById("playButton");
+  // ONLY show overlay for QR visitors
 
-  if (shouldAutoplay) {
+  if (shouldUseOverlay) {
 
-    audio.play()
-      .then(() => {
+    overlay.style.display = "flex";
 
-        console.log("Autoplay worked");
-
-      })
-      .catch(() => {
-
-        console.log("Autoplay blocked");
-
-        playButton.style.display = "inline-block";
-
-      });
+    pageContent.classList.add("blurred");
 
   }
 
-  playButton.addEventListener("click", () => {
+  // BUTTON CLICK
+
+  continueButton.addEventListener("click", () => {
+
+    // Play voicemail immediately
 
     audio.play();
 
-    playButton.style.display = "none";
+    // Fade overlay away
+
+    overlay.classList.add("hidden");
+
+    // Remove blur from page
+
+    pageContent.classList.remove("blurred");
 
   });
 
