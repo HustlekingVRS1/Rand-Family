@@ -53,147 +53,107 @@
     /* CAROUSEL */
 
     .carousel-wrapper {
-
       position: relative;
-
       width: 100%;
-
       max-width: 1000px;
-
       margin: 0 auto 40px auto;
-
       overflow: hidden;
     }
 
     .photo-carousel {
-
       display: flex;
-
       align-items: center;
-
       justify-content: center;
-
       gap: 20px;
+      transition: transform 0.45s ease;
+      transform: translateX(0);
+    }
 
-      transition: transform 0.5s ease;
+    .photo-carousel.slide-left {
+      transform: translateX(-72%);
+    }
+
+    .photo-carousel.slide-right {
+      transform: translateX(72%);
     }
 
     .carousel-image {
-
       flex: 0 0 70%;
-
       max-width: 800px;
-
       border-radius: 18px;
-
       overflow: hidden;
-
       transition:
-        transform 0.5s ease,
-        opacity 0.5s ease,
-        filter 0.5s ease;
-
+        transform 0.45s ease,
+        opacity 0.45s ease,
+        filter 0.45s ease;
       opacity: 0.45;
-
       filter: blur(3px) brightness(60%);
-
       transform: scale(0.85);
     }
 
     .carousel-image.active {
-
       opacity: 1;
-
       filter: blur(0px) brightness(100%);
-
       transform: scale(1);
     }
 
     .carousel-image img {
-
       width: 100%;
-
       display: block;
     }
 
     /* MAIN PAGE CONTENT */
 
     #pageContent {
-
       transition:
         filter 1.5s ease,
         opacity 1.5s ease;
     }
 
     .blurred {
-
       filter: blur(12px) brightness(40%);
-
       opacity: 0.5;
-
       pointer-events: none;
-
       user-select: none;
     }
 
     /* OVERLAY */
 
     #overlay {
-
       position: fixed;
-
       inset: 0;
-
       background: rgba(0,0,0,0.65);
-
       display: flex;
-
       justify-content: center;
-
       align-items: center;
-
       z-index: 9999;
-
       opacity: 1;
-
       transition: opacity 1.5s ease;
     }
 
     #overlay.hidden {
-
       opacity: 0;
-
       pointer-events: none;
     }
 
     /* BUTTON */
 
     #continueButton {
-
       padding: 22px 42px;
-
       font-size: 24px;
-
       border: none;
-
       border-radius: 12px;
-
       cursor: pointer;
-
       background: white;
-
       color: black;
-
       transition:
         transform 0.2s ease,
         opacity 0.3s ease;
-
       box-shadow:
         0 0 30px rgba(255,255,255,0.25);
     }
 
     #continueButton:hover {
-
       transform: scale(1.05);
     }
 
@@ -228,15 +188,15 @@
       <div class="photo-carousel" id="carousel">
 
         <div class="carousel-image">
-          <img src="pic6.jpg">
+          <img id="prevPhoto" src="pic6.jpg">
         </div>
 
         <div class="carousel-image active">
-          <img src="pic1.jpg">
+          <img id="currentPhoto" src="pic1.jpg">
         </div>
 
         <div class="carousel-image">
-          <img src="pic2.jpg">
+          <img id="nextPhoto" src="pic2.jpg">
         </div>
 
       </div>
@@ -328,17 +288,23 @@
     ];
 
     let currentIndex = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isAnimating = false;
 
     const carousel =
       document.getElementById("carousel");
 
-    let touchStartX = 0;
+    const prevPhoto =
+      document.getElementById("prevPhoto");
 
-    let touchEndX = 0;
+    const currentPhoto =
+      document.getElementById("currentPhoto");
 
-    // RENDER CAROUSEL
+    const nextPhoto =
+      document.getElementById("nextPhoto");
 
-    function renderCarousel() {
+    function updatePhotos() {
 
       const prevIndex =
         (currentIndex - 1 + photos.length) %
@@ -348,26 +314,73 @@
         (currentIndex + 1) %
         photos.length;
 
-      carousel.innerHTML = `
+      prevPhoto.src =
+        photos[prevIndex];
 
-        <div class="carousel-image">
-          <img src="${photos[prevIndex]}">
-        </div>
+      currentPhoto.src =
+        photos[currentIndex];
 
-        <div class="carousel-image active">
-          <img src="${photos[currentIndex]}">
-        </div>
-
-        <div class="carousel-image">
-          <img src="${photos[nextIndex]}">
-        </div>
-
-      `;
+      nextPhoto.src =
+        photos[nextIndex];
     }
 
-    renderCarousel();
+    function goNext() {
 
-    // TOUCH EVENTS
+      if (isAnimating) return;
+
+      isAnimating = true;
+
+      carousel.classList.add("slide-left");
+
+      setTimeout(() => {
+
+        currentIndex =
+          (currentIndex + 1) %
+          photos.length;
+
+        carousel.style.transition = "none";
+
+        carousel.classList.remove("slide-left");
+
+        updatePhotos();
+
+        carousel.offsetHeight;
+
+        carousel.style.transition = "";
+
+        isAnimating = false;
+
+      }, 450);
+    }
+
+    function goPrevious() {
+
+      if (isAnimating) return;
+
+      isAnimating = true;
+
+      carousel.classList.add("slide-right");
+
+      setTimeout(() => {
+
+        currentIndex =
+          (currentIndex - 1 + photos.length) %
+          photos.length;
+
+        carousel.style.transition = "none";
+
+        carousel.classList.remove("slide-right");
+
+        updatePhotos();
+
+        carousel.offsetHeight;
+
+        carousel.style.transition = "";
+
+        isAnimating = false;
+
+      }, 450);
+    }
 
     carousel.addEventListener("touchstart", (e) => {
 
@@ -381,39 +394,20 @@
       touchEndX =
         e.changedTouches[0].screenX;
 
-      handleSwipe();
-
-    });
-
-    // SWIPE LOGIC
-
-    function handleSwipe() {
-
       const swipeDistance =
         touchEndX - touchStartX;
 
-      // SWIPE LEFT
-
       if (swipeDistance < -50) {
-
-        currentIndex =
-          (currentIndex + 1) %
-          photos.length;
-
-        renderCarousel();
+        goNext();
       }
-
-      // SWIPE RIGHT
 
       if (swipeDistance > 50) {
-
-        currentIndex =
-          (currentIndex - 1 + photos.length) %
-          photos.length;
-
-        renderCarousel();
+        goPrevious();
       }
-    }
+
+    });
+
+    updatePhotos();
 
     // QR OVERLAY
 
