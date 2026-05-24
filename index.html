@@ -2,6 +2,7 @@
 <html>
 
 <head>
+
   <title>Memories</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,12 +19,12 @@
       overflow-x: hidden;
     }
 
-h1 {
-  margin-bottom: 10px;
-  font-family: "Monotype Corsiva", cursive;
-  font-size: 56px;
-  font-weight: normal;
-}
+    h1 {
+      margin-bottom: 10px;
+      font-family: "Monotype Corsiva", cursive;
+      font-size: 56px;
+      font-weight: normal;
+    }
 
     .video-container {
       margin: 30px auto;
@@ -47,6 +48,71 @@ h1 {
     audio {
       width: 90%;
       max-width: 500px;
+    }
+
+    /* PHOTO CAROUSEL */
+
+    .photo-carousel {
+
+      display: flex;
+
+      overflow-x: auto;
+
+      gap: 20px;
+
+      scroll-snap-type: x mandatory;
+
+      padding: 20px 0 40px 0;
+
+      align-items: center;
+
+      -webkit-overflow-scrolling: touch;
+
+      scrollbar-width: none;
+    }
+
+    .photo-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-image {
+
+      flex: 0 0 80%;
+
+      max-width: 800px;
+
+      scroll-snap-align: center;
+
+      transition:
+        transform 0.4s ease,
+        filter 0.4s ease,
+        opacity 0.4s ease;
+
+      border-radius: 16px;
+
+      overflow: hidden;
+
+      opacity: 0.7;
+
+      filter: blur(2px) brightness(70%);
+
+      transform: scale(0.92);
+    }
+
+    .carousel-image.active {
+
+      opacity: 1;
+
+      filter: blur(0px) brightness(100%);
+
+      transform: scale(1);
+    }
+
+    .carousel-image img {
+
+      width: 100%;
+
+      display: block;
     }
 
     /* MAIN PAGE CONTENT */
@@ -78,6 +144,7 @@ h1 {
       z-index: 9999;
 
       opacity: 1;
+
       transition: opacity 1.5s ease;
     }
 
@@ -116,147 +183,215 @@ h1 {
       transform: scale(1.05);
     }
 
-.top-image {
-  width: 100%;
-  max-width: 800px;
-  border-radius: 12px;
-  margin: 30px auto;
-  display: block;
-}
-	  
   </style>
+
 </head>
 
 <body>
 
-<!-- OVERLAY -->
+  <!-- OVERLAY -->
 
-<div id="overlay" style="display:none;">
+  <div id="overlay" style="display:none;">
 
-  <button id="continueButton">
-    Tap Here to Continue
-  </button>
-
-</div>
-
-<!-- PAGE CONTENT -->
-
-<div id="pageContent">
-
-  <h1>Memories</h1>
-
-  <p>of a life that's been loved</p>
-
-<img src="pic1.jpg" class="top-image">
-
-  <div class="video-container">
-
-    <iframe
-      src="https://www.youtube.com/embed/vPGCUgbZX8w"
-      allowfullscreen>
-    </iframe>
+    <button id="continueButton">
+      Tap Here to Continue
+    </button>
 
   </div>
 
-  <div class="audio-section">
+  <!-- PAGE CONTENT -->
 
-    <h2>Audio Files</h2>
+  <div id="pageContent">
 
-    <div class="audio-item">
+    <h1>Memories</h1>
 
-      <p>Voicemail 1</p>
+    <p>of a life that's been loved</p>
 
-      <audio id="autoplayAudio" controls>
-        <source src="dads-voicemail-hihi.wav" type="audio/wav">
-      </audio>
+    <!-- PHOTO CAROUSEL -->
+
+    <div class="photo-carousel" id="carousel">
+
+      <div class="carousel-image active">
+        <img src="pic1.jpg">
+      </div>
+
+      <div class="carousel-image">
+        <img src="pic2.jpg">
+      </div>
+
+      <div class="carousel-image">
+        <img src="pic3.jpg">
+      </div>
+
+      <div class="carousel-image">
+        <img src="pic4.jpg">
+      </div>
+
+      <div class="carousel-image">
+        <img src="pic5.jpg">
+      </div>
+
+      <div class="carousel-image">
+        <img src="pic6.jpg">
+      </div>
 
     </div>
 
-    <div class="audio-item">
+    <!-- VIDEO -->
 
-      <p>Voicemail 2</p>
+    <div class="video-container">
 
-      <audio controls>
-        <source src="dads-voicemail-hello.wav" type="audio/wav">
-      </audio>
+      <iframe
+        src="https://www.youtube.com/embed/vPGCUgbZX8w"
+        allowfullscreen>
+      </iframe>
 
     </div>
 
-	  <div class="audio-item">
-		  
-  <p>Steve and Annie Chapman - The ships are burning</p>
+    <!-- AUDIO -->
 
-  <audio controls>
-    <source src="Ships.mp3" type="audio/mp3">
-  </audio>
-	  </div>
+    <div class="audio-section">
 
-<div class="audio-item">
-	
-  <p>Glen Campbell - Searchin love</p>
+      <h2>Audio Files</h2>
 
-  <audio controls>
-    <source src="Searchin.mp3" type="audio/mp3">
-  </audio>
-</div>
-	  
-    <div class="audio-item">
+      <div class="audio-item">
 
-      <p>Ed Sheeran - Supermarket Flowers (Voicemail edition)</p>
+        <p>Voicemail 1</p>
 
-      <audio controls>
-        <source src="flowers.mp3" type="audio/mp3">
-      </audio>
+        <audio id="autoplayAudio" controls>
+          <source src="dads-voicemail-hihi.wav" type="audio/wav">
+        </audio>
+
+      </div>
+
+      <div class="audio-item">
+
+        <p>Voicemail 2</p>
+
+        <audio controls>
+          <source src="dads-voicemail-hello.wav" type="audio/wav">
+        </audio>
+
+      </div>
+
+      <div class="audio-item">
+
+        <p>Steve and Annie Chapman - The ships are burning</p>
+
+        <audio controls>
+          <source src="Ships.mp3" type="audio/mp3">
+        </audio>
+
+      </div>
+
+      <div class="audio-item">
+
+        <p>Glen Campbell - Searchin love</p>
+
+        <audio controls>
+          <source src="Searchin.mp3" type="audio/mp3">
+        </audio>
+
+      </div>
+
+      <div class="audio-item">
+
+        <p>Ed Sheeran - Supermarket Flowers (Voicemail edition)</p>
+
+        <audio controls>
+          <source src="flowers.mp3" type="audio/mp3">
+        </audio>
+
+      </div>
 
     </div>
 
   </div>
 
-</div>
+  <script>
 
-<script>
+    // PHOTO CAROUSEL
 
-  const params = new URLSearchParams(window.location.search);
+    const carousel = document.getElementById("carousel");
 
-  const shouldUseOverlay = params.get("qr") === "true";
+    const images = document.querySelectorAll(".carousel-image");
 
-  const overlay = document.getElementById("overlay");
+    carousel.addEventListener("scroll", () => {
 
-  const continueButton = document.getElementById("continueButton");
+      let center =
+        carousel.scrollLeft + (carousel.offsetWidth / 2);
 
-  const pageContent = document.getElementById("pageContent");
+      images.forEach((img) => {
 
-  const audio = document.getElementById("autoplayAudio");
+        let imgCenter =
+          img.offsetLeft + (img.offsetWidth / 2);
 
-  // ONLY show overlay for QR visitors
+        let distance =
+          Math.abs(center - imgCenter);
 
-  if (shouldUseOverlay) {
+        if (distance < img.offsetWidth / 2) {
 
-    overlay.style.display = "flex";
+          img.classList.add("active");
 
-    pageContent.classList.add("blurred");
+        } else {
 
-  }
+          img.classList.remove("active");
 
-  // BUTTON CLICK
+        }
 
-  continueButton.addEventListener("click", () => {
+      });
 
-    // Play voicemail immediately
+    });
 
-    audio.play();
+    // QR OVERLAY
 
-    // Fade overlay away
+    const params =
+      new URLSearchParams(window.location.search);
 
-    overlay.classList.add("hidden");
+    const shouldUseOverlay =
+      params.get("qr") === "true";
 
-    // Remove blur from page
+    const overlay =
+      document.getElementById("overlay");
 
-    pageContent.classList.remove("blurred");
+    const continueButton =
+      document.getElementById("continueButton");
 
-  });
+    const pageContent =
+      document.getElementById("pageContent");
 
-</script>
+    const audio =
+      document.getElementById("autoplayAudio");
+
+    // ONLY show overlay for QR visitors
+
+    if (shouldUseOverlay) {
+
+      overlay.style.display = "flex";
+
+      pageContent.classList.add("blurred");
+
+    }
+
+    // BUTTON CLICK
+
+    continueButton.addEventListener("click", () => {
+
+      // Play voicemail immediately
+
+      audio.play();
+
+      // Fade overlay away
+
+      overlay.classList.add("hidden");
+
+      // Remove blur from page
+
+      pageContent.classList.remove("blurred");
+
+    });
+
+  </script>
 
 </body>
 
