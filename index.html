@@ -50,35 +50,32 @@
       max-width: 500px;
     }
 
-    /* PHOTO CAROUSEL */
+    /* CAROUSEL */
 
     .carousel-wrapper {
+
+      position: relative;
+
       width: 100%;
+
+      max-width: 1000px;
+
+      margin: 0 auto 40px auto;
+
       overflow: hidden;
-      margin-bottom: 30px;
     }
 
     .photo-carousel {
 
       display: flex;
 
-      overflow-x: auto;
+      align-items: center;
+
+      justify-content: center;
 
       gap: 20px;
 
-      scroll-behavior: smooth;
-
-      padding: 20px 0 40px 0;
-
-      align-items: center;
-
-      -webkit-overflow-scrolling: touch;
-
-      scrollbar-width: none;
-    }
-
-    .photo-carousel::-webkit-scrollbar {
-      display: none;
+      transition: transform 0.5s ease;
     }
 
     .carousel-image {
@@ -87,20 +84,20 @@
 
       max-width: 800px;
 
-      transition:
-        transform 0.4s ease,
-        filter 0.4s ease,
-        opacity 0.4s ease;
-
-      border-radius: 16px;
+      border-radius: 18px;
 
       overflow: hidden;
 
-      opacity: 0.5;
+      transition:
+        transform 0.5s ease,
+        opacity 0.5s ease,
+        filter 0.5s ease;
+
+      opacity: 0.45;
 
       filter: blur(3px) brightness(60%);
 
-      transform: scale(0.88);
+      transform: scale(0.85);
     }
 
     .carousel-image.active {
@@ -122,27 +119,37 @@
     /* MAIN PAGE CONTENT */
 
     #pageContent {
+
       transition:
         filter 1.5s ease,
         opacity 1.5s ease;
     }
 
     .blurred {
+
       filter: blur(12px) brightness(40%);
+
       opacity: 0.5;
+
       pointer-events: none;
+
       user-select: none;
     }
 
     /* OVERLAY */
 
     #overlay {
+
       position: fixed;
+
       inset: 0;
+
       background: rgba(0,0,0,0.65);
 
       display: flex;
+
       justify-content: center;
+
       align-items: center;
 
       z-index: 9999;
@@ -153,7 +160,9 @@
     }
 
     #overlay.hidden {
+
       opacity: 0;
+
       pointer-events: none;
     }
 
@@ -184,6 +193,7 @@
     }
 
     #continueButton:hover {
+
       transform: scale(1.05);
     }
 
@@ -217,32 +227,17 @@
 
       <div class="photo-carousel" id="carousel">
 
-        <!-- DUPLICATE SET FOR LOOPING -->
+        <div class="carousel-image">
+          <img src="pic6.jpg">
+        </div>
 
-        <div class="carousel-image"><img src="pic1.jpg"></div>
-        <div class="carousel-image"><img src="pic2.jpg"></div>
-        <div class="carousel-image"><img src="pic3.jpg"></div>
-        <div class="carousel-image"><img src="pic4.jpg"></div>
-        <div class="carousel-image"><img src="pic5.jpg"></div>
-        <div class="carousel-image"><img src="pic6.jpg"></div>
+        <div class="carousel-image active">
+          <img src="pic1.jpg">
+        </div>
 
-        <!-- REAL CENTER SET -->
-
-        <div class="carousel-image"><img src="pic1.jpg"></div>
-        <div class="carousel-image"><img src="pic2.jpg"></div>
-        <div class="carousel-image"><img src="pic3.jpg"></div>
-        <div class="carousel-image"><img src="pic4.jpg"></div>
-        <div class="carousel-image"><img src="pic5.jpg"></div>
-        <div class="carousel-image"><img src="pic6.jpg"></div>
-
-        <!-- DUPLICATE SET FOR LOOPING -->
-
-        <div class="carousel-image"><img src="pic1.jpg"></div>
-        <div class="carousel-image"><img src="pic2.jpg"></div>
-        <div class="carousel-image"><img src="pic3.jpg"></div>
-        <div class="carousel-image"><img src="pic4.jpg"></div>
-        <div class="carousel-image"><img src="pic5.jpg"></div>
-        <div class="carousel-image"><img src="pic6.jpg"></div>
+        <div class="carousel-image">
+          <img src="pic2.jpg">
+        </div>
 
       </div>
 
@@ -321,78 +316,104 @@
 
   <script>
 
-    // CAROUSEL
+    // PHOTO DATA
+
+    const photos = [
+      "pic1.jpg",
+      "pic2.jpg",
+      "pic3.jpg",
+      "pic4.jpg",
+      "pic5.jpg",
+      "pic6.jpg"
+    ];
+
+    let currentIndex = 0;
 
     const carousel =
       document.getElementById("carousel");
 
-    const images =
-      document.querySelectorAll(".carousel-image");
+    let touchStartX = 0;
 
-    function updateCarousel() {
+    let touchEndX = 0;
 
-      const center =
-        carousel.scrollLeft +
-        (carousel.offsetWidth / 2);
+    // RENDER CAROUSEL
 
-      images.forEach((img) => {
+    function renderCarousel() {
 
-        const imgCenter =
-          img.offsetLeft +
-          (img.offsetWidth / 2);
+      const prevIndex =
+        (currentIndex - 1 + photos.length) %
+        photos.length;
 
-        const distance =
-          Math.abs(center - imgCenter);
+      const nextIndex =
+        (currentIndex + 1) %
+        photos.length;
 
-        if (distance < img.offsetWidth / 2) {
+      carousel.innerHTML = `
 
-          img.classList.add("active");
+        <div class="carousel-image">
+          <img src="${photos[prevIndex]}">
+        </div>
 
-        } else {
+        <div class="carousel-image active">
+          <img src="${photos[currentIndex]}">
+        </div>
 
-          img.classList.remove("active");
+        <div class="carousel-image">
+          <img src="${photos[nextIndex]}">
+        </div>
 
-        }
-
-      });
-
+      `;
     }
 
-    carousel.addEventListener("scroll", () => {
+    renderCarousel();
 
-      updateCarousel();
+    // TOUCH EVENTS
 
-      const maxScroll =
-        carousel.scrollWidth - carousel.offsetWidth;
+    carousel.addEventListener("touchstart", (e) => {
 
-      // LOOPING EFFECT
-
-      if (carousel.scrollLeft < 500) {
-
-        carousel.scrollLeft =
-          carousel.scrollLeft + (maxScroll / 3);
-
-      }
-
-      if (carousel.scrollLeft > maxScroll - 500) {
-
-        carousel.scrollLeft =
-          carousel.scrollLeft - (maxScroll / 3);
-
-      }
+      touchStartX =
+        e.changedTouches[0].screenX;
 
     });
 
-    // CENTER INITIAL POSITION
+    carousel.addEventListener("touchend", (e) => {
 
-    window.addEventListener("load", () => {
+      touchEndX =
+        e.changedTouches[0].screenX;
 
-      carousel.scrollLeft =
-        carousel.scrollWidth / 3;
-
-      updateCarousel();
+      handleSwipe();
 
     });
+
+    // SWIPE LOGIC
+
+    function handleSwipe() {
+
+      const swipeDistance =
+        touchEndX - touchStartX;
+
+      // SWIPE LEFT
+
+      if (swipeDistance < -50) {
+
+        currentIndex =
+          (currentIndex + 1) %
+          photos.length;
+
+        renderCarousel();
+      }
+
+      // SWIPE RIGHT
+
+      if (swipeDistance > 50) {
+
+        currentIndex =
+          (currentIndex - 1 + photos.length) %
+          photos.length;
+
+        renderCarousel();
+      }
+    }
 
     // QR OVERLAY
 
@@ -419,7 +440,6 @@
       overlay.style.display = "flex";
 
       pageContent.classList.add("blurred");
-
     }
 
     continueButton.addEventListener("click", () => {
